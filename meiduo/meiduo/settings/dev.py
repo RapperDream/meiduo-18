@@ -23,6 +23,9 @@ SECRET_KEY = 'd6(5r2be39ck1pv7s3v#s5b1#*x_0p(tpn-ghvn_=f32a389=g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+import sys
+
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))  # 添加导包路径
 
 ALLOWED_HOSTS = []
 
@@ -36,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'users.apps.UsersConfig',  # 注册路由
 ]
 
 MIDDLEWARE = [
@@ -132,6 +136,13 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
+    },
+    "verify": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -182,3 +193,5 @@ REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
+
+AUTH_USER_MODEL = 'users.User'
