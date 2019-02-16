@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django_redis import get_redis_connection
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from random import randint
@@ -9,8 +10,11 @@ from random import randint
 from celery_tasks.sms.tasks import send_sms_code
 from meiduo.libs.yuntongxun.sms import CCP
 
-
 # 短信验证码接口
+from users.models import User
+from users.serializers import UserSerializers
+
+
 class SmsCode(APIView):
     def get(self, request, mobile):
         conn = get_redis_connection('verify')  # redis的操作可以到ｒｅｄｉｓ中国官网查看
@@ -34,3 +38,23 @@ class SmsCode(APIView):
 
         # 返回结果
         return Response({"message": "ok"})
+
+
+class UserNameCountView(APIView):
+    def get(self, request, username):
+        count = User.objects.filter(username=username).count()
+        return Response(
+            {"count": count}
+        )
+
+
+class MobileCountView(APIView):
+    def get(self, request, mobile):
+        count = User.objects.filter(mobile=mobile).count()
+        return Response(
+            {"count": count}
+        )
+
+
+class UserView(CreateAPIView):
+    serializer_class = UserSerializers
