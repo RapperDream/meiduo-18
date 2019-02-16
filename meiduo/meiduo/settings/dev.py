@@ -13,6 +13,8 @@ import datetime
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# from users.utils import jwt_response_payload_handler
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -203,6 +205,8 @@ REST_FRAMEWORK = {
 }
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=15),  # 指明token 的有效期
+    # 修改返回结果数据，用户名以及用户ｉｄ
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 }
 
 AUTH_USER_MODEL = 'users.User'
@@ -214,3 +218,8 @@ CORS_ORIGIN_WHITELIST = [  # 允许跨域的域名
     'api.meiduo.site:8000',
 ]
 CORS_ALLOW_CREDENTAILS = True  # 允许携带cookie
+
+# 自定义认证后端
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend',
+]
