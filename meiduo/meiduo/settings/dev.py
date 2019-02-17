@@ -204,9 +204,9 @@ REST_FRAMEWORK = {
     ),
 }
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=15),  # 指明token 的有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),  # 指明token 的有效期
     # 修改返回结果数据，用户名以及用户ｉｄ
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER':'users.utils.jwt_response_payload_handler',
 }
 
 AUTH_USER_MODEL = 'users.User'
@@ -217,7 +217,7 @@ CORS_ORIGIN_WHITELIST = [  # 允许跨域的域名
     'www.meiduo.site：8080',
     'api.meiduo.site:8000',
 ]
-CORS_ALLOW_CREDENTAILS = True  # 允许携带cookie
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
 # 自定义认证后端
 AUTHENTICATION_BACKENDS = [

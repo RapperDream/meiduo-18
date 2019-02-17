@@ -73,15 +73,16 @@ class UserSerializers(serializers.ModelSerializer):
         del validated_data["password2"]
         del validated_data["allow"]
         del validated_data["sms_code"]
-        user = super().create(validated_data)
+        # user = super().create(validated_data)
 
         # 自动加密
         # user = User.objects.create_user(username=validated_data["username"])
 
         # 手动加密
-        # user = User.objects.create(password=validated_data["password"])
-        # user.set_password(validated_data["password"])
-        # user.save()
+        user = User.objects.create(username=validated_data['username'], mobile=validated_data['mobile'],
+                                   password=validated_data['password'])
+        user.set_password(validated_data["password"])
+        user.save()
 
         # 生成token
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
