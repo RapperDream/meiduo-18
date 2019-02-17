@@ -20,7 +20,7 @@ var vm = new Vue({
         mobile: '',
         image_code: '',
         sms_code: '',
-        access_token: ''
+        openid: ''
     },
     mounted: function(){
         // 从路径中获取qq重定向返回的code
@@ -43,7 +43,7 @@ var vm = new Vue({
                     location.href = state;
                 } else {
                     // 用户未绑定
-                    this.access_token = response.data.access_token;
+                    this.openid = response.data.openid;
                     this.is_show_waiting = false;
                 }
             })
@@ -154,7 +154,7 @@ var vm = new Vue({
                     password: this.password,
                     mobile: this.mobile,
                     sms_code: this.sms_code,
-                    access_token: this.access_token
+                    openid: this.openid
                 }, {
                     responseType: 'json',
                     withCredentials: true
