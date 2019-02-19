@@ -1,5 +1,8 @@
 import re
-
+from itsdangerous import TimedJSONWebSignatureSerializer as TJS
+from django.conf import settings
+from django.core.mail import send_mail
+# from celery_tasks.email.tasks import send_email
 from django_redis import get_redis_connection
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
@@ -95,3 +98,32 @@ class UserSerializers(serializers.ModelSerializer):
         user.token = token
 
         return user
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'id', 'mobile', 'email', 'email_active')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'id')
+
+    def update(self, instance, validated_data):
+        user = self.context['request'].user  # 序列化器可以通过context调用request属性
+        data = self.context['view'].kwargs  # kwargs获取路由正则匹配的数据
+        # 加密用户信息
+        tjs = TJS(settings.SECRET_KEY, 300)
+        token = tjs.dumps({'id': instance.id}).decode()
+
+        # Send emails
+        # 构建验证链接
+        html = "<a href='http://www.meiduo.site:8080/success_verify_email.html?token={}'>美多商城</a>".format(token)
+        send_mail('美多商城验证', '', settings.EMAIL_FROM, [validated_data['email']], html_message=html)
+        # send_mail(validated_data['email'], html)
+        instance.email = validated_data['email']
+        instance.save()
+
+        return instance
