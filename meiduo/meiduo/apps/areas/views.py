@@ -1,14 +1,17 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, GenericAPIView
+from rest_framework.response import Response
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
-from areas.models import Area
+from areas.models import Area, Address
 from areas.serializers import AreaSerializer, AddressSerializer
 
-
 # 省信息
+from users.models import User
+
+
 class AreaView(ListAPIView):
     queryset = Area.objects.filter(parent=None)
     serializer_class = AreaSerializer
@@ -22,5 +25,32 @@ class AreasView(ListAPIView, CacheResponseMixin):
         pk = self.kwargs['pk']
         return Area.objects.filter(parent=pk)
 
-class AddressView(CreateAPIView):
+
+# 地址的增删改查
+class AddressView(CreateAPIView, ListAPIView, UpdateAPIView):
     serializer_class = AddressSerializer
+
+    # queryset = Address.objects.filter(user=user)  # 此处获取不到user所以重写
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user, is_deleted=False)
+
+    def delete(self, request, pk):
+        address = self.get_object()
+        address.is_deleted = True
+        address.save()
+
+        return Response({"message": "ok"})
+
+
+class StatusView(GenericAPIView):
+    def put(self, request, pk):
+        user = request.user
+        user.default_address_id = pk
+        user.save()
+
+        # 返回序列化器对象
+        address = Address.objects.get(id=pk)
+        ser = AddressSerializer(address)
+
+        return Response(ser.data)
