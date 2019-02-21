@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # 注册路由
     'users.apps.UsersConfig',
     'oauth.apps.OauthConfig',
+    'areas.apps.AreasConfig',
 ]
 
 MIDDLEWARE = [
@@ -242,3 +243,11 @@ EMAIL_HOST_USER = 'mr__bian@163.com'
 EMAIL_HOST_PASSWORD = 'bxj123'
 # 收件人看到的发件人
 EMAIL_FROM = 'meiduo<mr__bian@163.com>'
+
+# DRF扩展
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,
+    # 缓存存储
+    'DEFAULT_USE_CACHE': 'default',
+}
