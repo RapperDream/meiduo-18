@@ -1,5 +1,6 @@
 from django.db import models
-
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 from meiduo.utils.models import BaseModel
@@ -60,6 +61,11 @@ class Goods(BaseModel):
     """
     商品SPU
     """
+    # 副文本字段
+    desc_detail = RichTextUploadingField(default='', verbose_name='详细介绍')  # 支持上传文
+    desc_pack = RichTextField(default='', verbose_name='包装信息')  # 不支持上传文件
+    desc_service = RichTextUploadingField(default='', verbose_name='售后服务')
+
     name = models.CharField(max_length=50, verbose_name='名称')
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, verbose_name='品牌')
     category1 = models.ForeignKey(GoodsCategory, on_delete=models.PROTECT, related_name='cat1_goods',
